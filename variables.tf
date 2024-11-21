@@ -93,9 +93,3 @@ variable "mailserver_tlsa" {
   type        = string
   default     = "0d7d5727620226b295f47ee16b4c0538a789664646843604b4a726adbdf6a17e"
 }
-
-variable "cloudflare_api_token" {
-  description = "Cloudflare API Token"
-  type        = string
-  sensitive   = true
-}
