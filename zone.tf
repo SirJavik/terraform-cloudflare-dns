@@ -10,11 +10,12 @@
 
 # Filename: zone.tf
 # Description: 
-# Version: 1.3.0
+# Version: 1.4.0
 # Author: Benjamin Schneider <ich@benjamin-schneider.com>
 # Date: 2024-04-26
-# Last Modified: 2024-07-20
+# Last Modified: 2024-11-21
 # Changelog: 
+# 1.4.0 - Add google-site-verification support
 # 1.3.0 - Remove cloudflare zones data object
 # 1.2.0 - Add dkim support
 # 1.1.0 - Added terraform_data.atproto_domain_parts
@@ -42,6 +43,15 @@ resource "terraform_data" "atproto_split" {
   triggers_replace = {
     parts = split(".", each.key)
   }
+}
+
+resource "terraform_data" "google_site_verification_split" {
+  for_each = var.google-site-verification
+
+  triggers_replace = {
+    parts = split(".", each.key)
+  }
+
 }
 
 resource "terraform_data" "dkim_split" {
@@ -97,5 +107,18 @@ resource "terraform_data" "dkim_domain_parts" {
     domain          = try(element(terraform_data.dkim_split[each.key].triggers_replace.parts, length(terraform_data.dkim_split[each.key].triggers_replace.parts) - 2), null)
     subdomain       = try(element(terraform_data.dkim_split[each.key].triggers_replace.parts, length(terraform_data.dkim_split[each.key].triggers_replace.parts) - 3), null)
     domain_with_tld = try(join(".", [element(terraform_data.dkim_split[each.key].triggers_replace.parts, length(terraform_data.dkim_split[each.key].triggers_replace.parts) - 2), element(terraform_data.dkim_split[each.key].triggers_replace.parts, length(terraform_data.dkim_split[each.key].triggers_replace.parts) - 1)]), null)
+  }
+}
+
+resource "terraform_data" "google_site_verification_parts" {
+  for_each = var.google-site-verification
+
+  triggers_replace = {
+    payload         = each.value
+    fulldomain      = each.key
+    tld             = try(element(terraform_data.google_site_verification_split[each.key].triggers_replace.parts, length(terraform_data.google_site_verification_split[each.key].triggers_replace.parts) - 1), null)
+    domain          = try(element(terraform_data.google_site_verification_split[each.key].triggers_replace.parts, length(terraform_data.google_site_verification_split[each.key].triggers_replace.parts) - 2), null)
+    subdomain       = try(element(terraform_data.google_site_verification_split[each.key].triggers_replace.parts, length(terraform_data.google_site_verification_split[each.key].triggers_replace.parts) - 3), null)
+    domain_with_tld = try(join(".", [element(terraform_data.google_site_verification_split[each.key].triggers_replace.parts, length(terraform_data.google_site_verification_split[each.key].triggers_replace.parts) - 2), element(terraform_data.google_site_verification_split[each.key].triggers_replace.parts, length(terraform_data.google_site_verification_split[each.key].triggers_replace.parts) - 1)]), null)
   }
 }

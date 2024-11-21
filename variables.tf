@@ -10,11 +10,12 @@
 
 # Filename: variables.tf
 # Description: 
-# Version: 1.3.0
+# Version: 1.4.0
 # Author: Benjamin Schneider <ich@benjamin-schneider.com>
 # Date: 2024-04-26
-# Last Modified: 2024-08-03
+# Last Modified: 2024-11-21
 # Changelog: 
+# 1.4.0 - Add site-verification
 # 1.3.0 - Add cloudflare token
 # 1.2.0 - Add Cloudflare zones
 # 1.1.0 - Add dkim support
@@ -58,6 +59,12 @@ variable "postmaster_email" {
 
 variable "atproto" {
   description = "Domains for bluesky"
+  type        = map(string)
+  default     = {}
+}
+
+variable "google-site-verification" {
+  description = "Site verification for domains at google"
   type        = map(string)
   default     = {}
 }
